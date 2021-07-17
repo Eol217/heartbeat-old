@@ -17,8 +17,8 @@ export class Instance {
   @Prop({ default: Date.now })
   updatedAt: number;
 
-  // @Prop()
-  // meta: object;
+  @Prop({ type: Object })
+  meta: object;
 }
 
 export const InstanceSchema = SchemaFactory.createForClass(Instance);

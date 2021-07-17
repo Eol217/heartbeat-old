@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsString, IsObject } from 'class-validator';
 
 export class CreateInstanceDto {
     @IsString()
@@ -6,4 +6,7 @@ export class CreateInstanceDto {
 
     @IsString()
     group: string;
+
+    @IsObject()
+    meta: object;
 }

@@ -1,15 +1,16 @@
-import {Controller, Get, Post, Body, Patch, Param, Delete} from '@nestjs/common';
+import {Controller, Get, Post, Body, Patch, Param, Delete, Res, Response} from '@nestjs/common';
 import {InstancesService} from './instances.service';
 import {CreateInstanceDto} from './dto/create-instance.dto';
 import {UpdateInstanceTimestampDto} from './dto/update-instance-timestamp.dto';
 import {DoesInstanceExistPipe} from "./pipes/does-instance-exist.pipe";
+import _ from 'lodash'
 
 @Controller()
 export class InstancesController {
     constructor(private readonly instancesService: InstancesService) {
     }
 
-    @Post(':group/:id')
+    @Post(':group/:id')// think about different status codes for insert/update
     async createOrUpdate(@Param() params, @Body() meta: any, @Param('id', DoesInstanceExistPipe) doesInstanceExist: boolean) {
         console.log('params: ', params)
         console.log('meta: ', meta)
@@ -23,6 +24,7 @@ export class InstancesController {
             const instance = {
                 id,
                 group,
+                meta,
             }
 
             await this.instancesService.create(instance);

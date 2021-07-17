@@ -23,7 +23,9 @@ export class InstancesService {
   }
 
   async findOne(id: string): Promise<Instance> {
-    return this.instanceModel.findOne({id}).exec();
+    const query ={ id }
+    const select ={ _id: 0, __v: 0 }
+    return this.instanceModel.findOne(query, select).exec();
   }
 
 
