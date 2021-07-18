@@ -6,8 +6,7 @@ import _ from 'lodash'
 
 @Controller()
 export class InstancesController {
-    constructor(private readonly instancesService: InstancesService) {
-    }
+    constructor(private readonly instancesService: InstancesService) {}
 
     // return an instance instead of doesInstanceExist and return it with the new updatedAt field???
     @Post(':group/:id')// think about different status codes for insert/update
@@ -39,14 +38,14 @@ export class InstancesController {
         return await this.instancesService.findOne(id)
     }
 
-    // @Get()
-    // findAll() {
-    //   return this.instancesService.findAll();
-    // }
-    //
+    @Get()
+    async getGroups() {
+      return await this.instancesService.getGroups();
+    }
+
     @Get(':group')
-    findOne(@Param('group') group: string) {
-      return this.instancesService.getGroupInstances(group);
+    async getGroupInstances(@Param('group') group: string) {
+      return await this.instancesService.getGroupInstances(group);
     }
 
 
