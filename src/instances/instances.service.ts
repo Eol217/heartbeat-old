@@ -3,11 +3,22 @@ import {Model} from "mongoose";
 import {InjectModel} from "@nestjs/mongoose";
 import {Instance, InstanceDocument} from "./schemas/instance.schema";
 import { IdentifyInstanceDto, CreateInstanceDto, UpdateInstanceTimestampDto, GroupDto} from "./dto";
+import { Interval } from '@nestjs/schedule';
+import { ConfigService } from '@nestjs/config';
+import { config } from 'dotenv'
+
+
+config()
+const InstanceExpirationTimeMsDefault = 1*60*1000
+const InstanceExpirationCheckIntervalMsDefault = InstanceExpirationTimeMsDefault / 2
+const InstanceExpirationCheckIntervalMs = Number(process.env.INSTANCE_EXPIRATION_CHECK_INTERVAL_MS)
+    || InstanceExpirationCheckIntervalMsDefault
 
 
 @Injectable()
 export class InstancesService {
     constructor(
+        private configService: ConfigService,
         @InjectModel(Instance.name) private readonly instanceModel: Model<InstanceDocument>,
     ) {
     }
@@ -27,11 +38,6 @@ export class InstancesService {
         }
         const instances = await this.instanceModel.find({}, select).exec();
         const preparedInstances = instances.reduce((result, current) => {
-            console.log('=================================')
-            console.log('result: ', result)
-            console.log('current: ', current)
-            console.log('=================================')
-
             const {group, createdAt, updatedAt} = current
             const groupInfo = result[group]
 
@@ -76,4 +82,19 @@ export class InstancesService {
     async remove(query: IdentifyInstanceDto) {
         await this.instanceModel.remove(query).exec();
     }
+
+    // it's impossible to use an enviroment variable inside a decorator with '@nestjs/config'
+    // so, if we want to do it, we have to use the native dotenv config
+    @Interval(InstanceExpirationCheckIntervalMs)
+    async removeExpiredInstances() {
+        const instanceExpirationTimeInMs = Number(this.configService.get<string>('INSTANCE_EXPIRATION_TIME_MS'))
+            || InstanceExpirationTimeMsDefault
+        const dateNow = Date.now()
+        const theEdge = dateNow - instanceExpirationTimeInMs
+
+        const query = { updatedAt: { $lte: theEdge } }
+        const amount = await this.instanceModel.deleteMany(query)
+        console.log('amount of deleted instances: ', amount.deletedCount)
+    }
 }
+
