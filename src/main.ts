@@ -7,9 +7,9 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe());
 
   await app.listen(3000, '0.0.0.0');
-  const appUrl = await app.getUrl()
+  const appUrl = await app.getUrl();
 
-  const logger = new Logger('bootstrap')
+  const logger = new Logger('bootstrap');
   logger.log(`Application is running on: ${appUrl}`);
 }
 

@@ -30,6 +30,7 @@ export class InstancesService {
   ) {}
 
   private readonly fieldsToHideSelector = { _id: 0, __v: 0 };
+
   private readonly logger = new Logger(InstancesService.name);
 
   async create(createInstanceDto: CreateInstanceDto): Promise<Instance> {
@@ -76,9 +77,7 @@ export class InstancesService {
   // so, if we want to do it, we have to use the native dotenv config
   @Interval(InstanceExpirationCheckIntervalMs)
   async removeExpiredInstances() {
-    this.logger.log(
-      'removeExpiredInstances -- periodic job started',
-    );
+    this.logger.log('removeExpiredInstances -- periodic job started');
     const instanceExpirationTimeInMs =
       Number(this.configService.get<string>('INSTANCE_EXPIRATION_TIME_MS')) ||
       InstanceExpirationTimeMsDefault;
@@ -87,10 +86,8 @@ export class InstancesService {
     const query = { updatedAt: { $lte: theEdge } };
     const { deletedCount } = await this.instanceModel.deleteMany(query);
     this.logger.log(
-      `removeExpiredInstances -- amount of deleted instances: ${deletedCount}`
+      `removeExpiredInstances -- amount of deleted instances: ${deletedCount}`,
     );
-    this.logger.log(
-      'removeExpiredInstances -- periodic job finished',
-    );
+    this.logger.log('removeExpiredInstances -- periodic job finished');
   }
 }
