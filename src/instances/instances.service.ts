@@ -70,7 +70,7 @@ export class InstancesService {
   }
 
   async remove(query: IdentifyInstanceDto) {
-    await this.instanceModel.remove(query).exec();
+    await this.instanceModel.deleteOne(query).exec();
   }
 
   // it's impossible to use an enviroment variable inside a decorator with '@nestjs/config'
