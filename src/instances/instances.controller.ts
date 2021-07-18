@@ -10,7 +10,7 @@ export class InstancesController {
 
     // return an instance instead of doesInstanceExist and return it with the new updatedAt field???
     @Post(':group/:id')// think about different status codes for insert/update
-    async createOrUpdate(@Param() params, @Body() meta: any, @Param('id', DoesInstanceExistPipe) doesInstanceExist: boolean) {
+    async createOrUpdate(@Param() params, @Body() meta: any, @Param(DoesInstanceExistPipe) doesInstanceExist: boolean) {
         console.log('params: ', params)
         console.log('meta: ', meta)
         console.log('doesInstanceExist: ', doesInstanceExist)
@@ -35,7 +35,7 @@ export class InstancesController {
             await this.instancesService.create(instance);
         }
 
-        return await this.instancesService.findOne(id)
+        return await this.instancesService.findOne(params)
     }
 
     @Get()

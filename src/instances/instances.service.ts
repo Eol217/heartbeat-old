@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {Model} from "mongoose";
 import {InjectModel} from "@nestjs/mongoose";
 import {Instance, InstanceDocument} from "./schemas/instance.schema";
-import {CreateInstanceDto, UpdateInstanceTimestampDto, DeleteInstanceDto, GroupDto} from "./dto";
+import { IdentifyInstanceDto, CreateInstanceDto, UpdateInstanceTimestampDto, DeleteInstanceDto, GroupDto} from "./dto";
 
 
 @Injectable()
@@ -27,8 +27,10 @@ export class InstancesService {
         }
         const instances = await this.instanceModel.find({}, select).exec();
         const preparedInstances = instances.reduce((result, current) => {
-            console.log('current: ', current)
+            console.log('=================================')
             console.log('result: ', result)
+            console.log('current: ', current)
+            console.log('=================================')
 
             const {group, createdAt, updatedAt} = current
             const groupInfo = result[group]
@@ -54,8 +56,7 @@ export class InstancesService {
         return Object.values(preparedInstances)
     }
 
-    async findOne(id: string): Promise<Instance> {
-        const query = {id}
+    async findOne(query: IdentifyInstanceDto): Promise<Instance> {
         return this.instanceModel.findOne(query, this.fieldsToHideSelector).exec();
     }
 
