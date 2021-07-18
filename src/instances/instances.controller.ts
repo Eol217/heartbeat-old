@@ -1,6 +1,6 @@
 import {Controller, Get, Post, Body, Patch, Param, Delete, Res, Response} from '@nestjs/common';
 import {InstancesService} from './instances.service';
-import { CreateInstanceDto, UpdateInstanceTimestampDto, DeleteInstanceDto } from './dto';
+import { CreateInstanceDto, UpdateInstanceTimestampDto, IdentifyInstanceDto } from './dto';
 import {DoesInstanceExistPipe} from "./pipes/does-instance-exist.pipe";
 import _ from 'lodash'
 
@@ -51,7 +51,7 @@ export class InstancesController {
 
 
     @Delete(':group/:id')
-    async remove(@Param() params: DeleteInstanceDto) {
+    async remove(@Param() params: IdentifyInstanceDto) {
       await this.instancesService.remove(params);
     }
 }

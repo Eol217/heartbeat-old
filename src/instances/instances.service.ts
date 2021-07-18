@@ -2,7 +2,7 @@ import {Injectable} from '@nestjs/common';
 import {Model} from "mongoose";
 import {InjectModel} from "@nestjs/mongoose";
 import {Instance, InstanceDocument} from "./schemas/instance.schema";
-import { IdentifyInstanceDto, CreateInstanceDto, UpdateInstanceTimestampDto, DeleteInstanceDto, GroupDto} from "./dto";
+import { IdentifyInstanceDto, CreateInstanceDto, UpdateInstanceTimestampDto, GroupDto} from "./dto";
 
 
 @Injectable()
@@ -73,7 +73,7 @@ export class InstancesService {
         await this.instanceModel.updateOne(query, {$set: {updatedAt}}).exec();
     }
 
-    async remove(query: DeleteInstanceDto) {
+    async remove(query: IdentifyInstanceDto) {
         await this.instanceModel.remove(query).exec();
     }
 }
