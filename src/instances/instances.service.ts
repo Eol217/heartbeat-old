@@ -11,6 +11,8 @@ export class InstancesService {
       @InjectModel(Instance.name) private readonly instanceModel: Model<InstanceDocument>,
   ) {}
 
+  readonly fieldsToHideSelector = { _id: 0, __v: 0 }
+
   async create(createInstanceDto: CreateInstanceDto): Promise<Instance> {
     const createdInstance = new this.instanceModel(createInstanceDto);
     return createdInstance.save();
@@ -22,8 +24,13 @@ export class InstancesService {
 
   async findOne(id: string): Promise<Instance> {
     const query ={ id }
-    const select ={ _id: 0, __v: 0 }
-    return this.instanceModel.findOne(query, select).exec();
+    return this.instanceModel.findOne(query, this.fieldsToHideSelector).exec();
+  }
+
+  async getGroupInstances(group: string): Promise<Instance[]> {
+    const query ={ group }
+
+    return this.instanceModel.find(query, this.fieldsToHideSelector).exec();
   }
 
 

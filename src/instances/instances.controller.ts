@@ -44,15 +44,12 @@ export class InstancesController {
     //   return this.instancesService.findAll();
     // }
     //
-    // @Get(':id')
-    // findOne(@Param('id') id: string) {
-    //   return this.instancesService.findOne(+id);
-    // }
-    //
-    // @Patch(':id')
-    // update(@Param('id') id: string, @Body() updateInstanceDto: UpdateInstanceDto) {
-    //   return this.instancesService.update(+id, updateInstanceDto);
-    // }
+    @Get(':group')
+    findOne(@Param('group') group: string) {
+      return this.instancesService.getGroupInstances(group);
+    }
+
+
 
     @Delete(':group/:id')
     async remove(@Param() params: DeleteInstanceDto) {
