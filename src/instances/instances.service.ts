@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { CreateInstanceDto } from './dto/create-instance.dto';
-import { UpdateInstanceTimestampDto } from './dto/update-instance-timestamp.dto';
-import {InjectModel} from "@nestjs/mongoose";
 import {Model} from "mongoose";
+import {InjectModel} from "@nestjs/mongoose";
 import {Instance, InstanceDocument} from "./schemas/instance.schema";
-import {FormatInstanceDto} from "./dto/format-instance.dto";
+import {CreateInstanceDto, UpdateInstanceTimestampDto, DeleteInstanceDto} from "./dto";
 
 
 @Injectable()
@@ -30,11 +28,12 @@ export class InstancesService {
 
 
   // it isn't specified, should update meta or not
-  async updateTimestamp(id: string, updatedAt: number) {
-    await this.instanceModel.updateOne({id}, {$set: {updatedAt}}).exec();
+  async updateTimestamp(updateInstanceTimestampDto: UpdateInstanceTimestampDto) {
+    const { updatedAt, ...query } = updateInstanceTimestampDto
+    await this.instanceModel.updateOne(query, {$set: {updatedAt}}).exec();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} instance`;
+  async remove(query: DeleteInstanceDto) {
+    await this.instanceModel.remove(query).exec();
   }
 }

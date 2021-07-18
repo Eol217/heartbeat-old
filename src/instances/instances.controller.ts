@@ -1,7 +1,6 @@
 import {Controller, Get, Post, Body, Patch, Param, Delete, Res, Response} from '@nestjs/common';
 import {InstancesService} from './instances.service';
-import {CreateInstanceDto} from './dto/create-instance.dto';
-import {UpdateInstanceTimestampDto} from './dto/update-instance-timestamp.dto';
+import { CreateInstanceDto, UpdateInstanceTimestampDto, DeleteInstanceDto } from './dto';
 import {DoesInstanceExistPipe} from "./pipes/does-instance-exist.pipe";
 import _ from 'lodash'
 
@@ -10,6 +9,7 @@ export class InstancesController {
     constructor(private readonly instancesService: InstancesService) {
     }
 
+    // return an instance instead of doesInstanceExist and return it with the new updatedAt field???
     @Post(':group/:id')// think about different status codes for insert/update
     async createOrUpdate(@Param() params, @Body() meta: any, @Param('id', DoesInstanceExistPipe) doesInstanceExist: boolean) {
         console.log('params: ', params)
@@ -19,7 +19,13 @@ export class InstancesController {
         const {id, group} = params
 
         if (doesInstanceExist) {
-            await this.instancesService.updateTimestamp(id, Date.now())
+            // can the identifiers be the same in different groups?
+            const updater = {
+                id,
+                group,
+                updatedAt: Date.now(),
+            }
+            await this.instancesService.updateTimestamp(updater)
         } else {
             const instance = {
                 id,
@@ -47,9 +53,9 @@ export class InstancesController {
     // update(@Param('id') id: string, @Body() updateInstanceDto: UpdateInstanceDto) {
     //   return this.instancesService.update(+id, updateInstanceDto);
     // }
-    //
-    // @Delete(':id')
-    // remove(@Param('id') id: string) {
-    //   return this.instancesService.remove(+id);
-    // }
+
+    @Delete(':group/:id')
+    async remove(@Param() params: DeleteInstanceDto) {
+      await this.instancesService.remove(params);
+    }
 }
