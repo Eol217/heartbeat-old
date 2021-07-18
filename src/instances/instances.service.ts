@@ -6,6 +6,7 @@ import { IdentifyInstanceDto, CreateInstanceDto, UpdateInstanceTimestampDto, Gro
 import { Interval } from '@nestjs/schedule';
 import { ConfigService } from '@nestjs/config';
 import { config } from 'dotenv'
+import { groupsSummaryReducer } from './helpers/groups-summary-reducer'
 
 
 config()
@@ -37,27 +38,7 @@ export class InstancesService {
             meta: 0,
         }
         const instances = await this.instanceModel.find({}, select).exec();
-        const preparedInstances = instances.reduce((result, current) => {
-            const {group, createdAt, updatedAt} = current
-            const groupInfo = result[group]
-
-            if (!groupInfo) {
-                result[group] = {
-                  group,
-                  instances: "1",
-                  createdAt,
-                  updatedAt,
-                }
-
-                return result
-            }
-
-            result[group].instances = String(++groupInfo.instances)
-            result[group].createdAt = Math.min(groupInfo.createdAt, createdAt)
-            result[group].updatedAt = Math.max(groupInfo.updatedAt, updatedAt)
-
-            return result
-        }, {})
+        const preparedInstances = instances.reduce(groupsSummaryReducer, {})
 
         return Object.values(preparedInstances)
     }
@@ -97,4 +78,3 @@ export class InstancesService {
         console.log('amount of deleted instances: ', amount.deletedCount)
     }
 }
-
