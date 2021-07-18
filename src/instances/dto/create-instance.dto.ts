@@ -1,12 +1,5 @@
 import { IsString, IsObject } from 'class-validator';
+import { IdentifyInstanceDto } from './identify-instance.dto'
+import {Instance, InstanceSchema} from "../schemas/instance.schema";
 
-export class CreateInstanceDto {
-    @IsString()
-    id: string;
-
-    @IsString()
-    group: string;
-
-    @IsObject()
-    meta: object;
-}
+export class CreateInstanceDto extends Instance {}

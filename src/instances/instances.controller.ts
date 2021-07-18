@@ -11,25 +11,21 @@ export class InstancesController {
     // return an instance instead of doesInstanceExist and return it with the new updatedAt field???
     @Post(':group/:id')// think about different status codes for insert/update
     async createOrUpdate(@Param() params, @Body() meta: any, @Param(DoesInstanceExistPipe) doesInstanceExist: boolean) {
-        console.log('params: ', params)
-        console.log('meta: ', meta)
-        console.log('doesInstanceExist: ', doesInstanceExist)
-
         const {id, group} = params
+        const dateNow = Date.now()
 
         if (doesInstanceExist) {
-            // can the identifiers be the same in different groups?
             const updater = {
-                id,
-                group,
-                updatedAt: Date.now(),
+                ...params,
+                updatedAt: dateNow,
             }
             await this.instancesService.updateTimestamp(updater)
         } else {
             const instance = {
-                id,
-                group,
+                ...params,
                 meta,
+                createdAt: dateNow,
+                updatedAt: dateNow,
             }
 
             await this.instancesService.create(instance);

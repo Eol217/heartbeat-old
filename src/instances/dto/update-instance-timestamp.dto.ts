@@ -1,13 +1,8 @@
 import {IsString, IsInt} from "class-validator";
+import {IdentifyInstanceDto} from './identify-instance.dto'
 
 
-export class UpdateInstanceTimestampDto {
-    @IsString()
-    id: string;
-
-    @IsString()
-    group: string;
-
+export class UpdateInstanceTimestampDto extends IdentifyInstanceDto {
     @IsInt()
     updatedAt: number;
 }

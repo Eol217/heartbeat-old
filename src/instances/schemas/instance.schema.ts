@@ -11,10 +11,10 @@ export class Instance {
   @Prop({ required: true })
   group: string;
 
-  @Prop({ default: Date.now }) // sync the fields ?
+  @Prop()
   createdAt: number;
 
-  @Prop({ default: Date.now })
+  @Prop()
   updatedAt: number;
 
   @Prop({ type: Object })
