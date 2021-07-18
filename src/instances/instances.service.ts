@@ -77,7 +77,7 @@ export class InstancesService {
   @Interval(InstanceExpirationCheckIntervalMs)
   async removeExpiredInstances() {
     this.logger.log(
-      'InstancesService::removeExpiredInstances -- periodic job started',
+      'removeExpiredInstances -- periodic job started',
     );
     const instanceExpirationTimeInMs =
       Number(this.configService.get<string>('INSTANCE_EXPIRATION_TIME_MS')) ||
@@ -87,10 +87,10 @@ export class InstancesService {
     const query = { updatedAt: { $lte: theEdge } };
     const { deletedCount } = await this.instanceModel.deleteMany(query);
     this.logger.log(
-      `InstancesService::removeExpiredInstances -- amount of deleted instances: ${deletedCount}`
+      `removeExpiredInstances -- amount of deleted instances: ${deletedCount}`
     );
     this.logger.log(
-      'InstancesService::removeExpiredInstances -- periodic job finished',
+      'removeExpiredInstances -- periodic job finished',
     );
   }
 }
