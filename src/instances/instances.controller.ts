@@ -1,20 +1,31 @@
-import { Controller, Get, Post, Body, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Delete,
+  Res,
+  HttpStatus,
+} from '@nestjs/common';
 import { InstancesService } from './instances.service';
 import { IdentifyInstanceDto } from './dto';
 import { DoesInstanceExistPipe } from './pipes/does-instance-exist.pipe';
+import { Response } from 'express';
 
 @Controller()
 export class InstancesController {
   constructor(private readonly instancesService: InstancesService) {}
 
-  // return an instance instead of doesInstanceExist and return it with the new updatedAt field???
-  @Post(':group/:id') // think about different status codes for insert/update
+  @Post(':group/:id')
   async createOrUpdate(
     @Param() params: IdentifyInstanceDto,
     @Body() meta: object,
     @Param(DoesInstanceExistPipe) doesInstanceExist: boolean,
+    @Res({ passthrough: true }) res: Response,
   ) {
     const dateNow = Date.now();
+    let status = HttpStatus.CREATED;
 
     if (doesInstanceExist) {
       const updater = {
@@ -23,6 +34,7 @@ export class InstancesController {
         updatedAt: dateNow,
       };
       await this.instancesService.updateTimestamp(updater);
+      status = HttpStatus.OK;
     } else {
       const instance = {
         ...params,
@@ -33,6 +45,8 @@ export class InstancesController {
 
       await this.instancesService.create(instance);
     }
+
+    res.status(status);
 
     return await this.instancesService.findOne(params);
   }
