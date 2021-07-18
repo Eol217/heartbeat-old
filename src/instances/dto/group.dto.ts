@@ -1,15 +1,15 @@
 import { IsString, IsInt } from 'class-validator';
 
 export class GroupDto {
-    @IsString()
-    group: string;
+  @IsString()
+  group!: string;
 
-    @IsString()
-    instances: string;
+  @IsString()
+  instances!: string;
 
-    @IsInt()
-    createdAt: number;
+  @IsInt()
+  createdAt!: number;
 
-    @IsInt()
-    updatedAt: number;
+  @IsInt()
+  updatedAt!: number;
 }
