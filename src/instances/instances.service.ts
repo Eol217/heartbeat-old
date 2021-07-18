@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Instance, InstanceDocument } from './schemas/instance.schema';
@@ -29,7 +29,8 @@ export class InstancesService {
     private readonly instanceModel: Model<InstanceDocument>,
   ) {}
 
-  readonly fieldsToHideSelector = { _id: 0, __v: 0 };
+  private readonly fieldsToHideSelector = { _id: 0, __v: 0 };
+  private readonly logger = new Logger(InstancesService.name);
 
   async create(createInstanceDto: CreateInstanceDto): Promise<Instance> {
     const createdInstance = new this.instanceModel(createInstanceDto);
@@ -75,7 +76,7 @@ export class InstancesService {
   // so, if we want to do it, we have to use the native dotenv config
   @Interval(InstanceExpirationCheckIntervalMs)
   async removeExpiredInstances() {
-    console.log(
+    this.logger.log(
       'InstancesService::removeExpiredInstances -- periodic job started',
     );
     const instanceExpirationTimeInMs =
@@ -85,11 +86,10 @@ export class InstancesService {
     const theEdge = dateNow - instanceExpirationTimeInMs;
     const query = { updatedAt: { $lte: theEdge } };
     const { deletedCount } = await this.instanceModel.deleteMany(query);
-    console.log(
-      'InstancesService::removeExpiredInstances -- amount of deleted instances: ',
-      deletedCount,
+    this.logger.log(
+      `InstancesService::removeExpiredInstances -- amount of deleted instances: ${deletedCount}`
     );
-    console.log(
+    this.logger.log(
       'InstancesService::removeExpiredInstances -- periodic job finished',
     );
   }
